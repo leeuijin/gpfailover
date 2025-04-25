@@ -78,14 +78,12 @@ do
 	SUCCESS_FG=`ls -lrt gpactivatestandby_*.log | tail -1 | awk '{print $9}' | xargs tail -30 | grep "completed successfully" | wc -l`
 	if [ ${SUCCESS_FG} -eq 1 ]
 	then
-		#sudo sh /usr/local/bin/vip_start.sh
 		ssh mdw 'sudo ifconfig ${VIP_INTERFACE} down'
 		sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} up
 		logger -i -p user.emerg "GP:INFO : Greenplum master failover has completed successfully"
 	else
 		logger -i -p user.emerg "GP:ERROR : Failed the activation of the standby master !!!"
 		logger -i -p user.emerg "GP:INFO : initialize VIP Configration" 
-		#sudo sh /usr/local/bin/vip_stop.sh
 		sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} down
 		logger -i -p user.emerg "GP:INFO : Restarting VIP on Master node"	
 		ssh mdw 'sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} up'
