@@ -11,7 +11,7 @@
 	모든 heart beat 체크 및 failover, VIP 관련 메세지 및 로그는 (smdw)의 /var/log/message 파일에 작성됩니다. 
 	heart beat 체크 주기는 failover.sh 스크립트 수정을 통하여 변경가능합니다. 
 
-# 개선된 사항 (2025.04.25)
+# 개선사항 (2025.04.25)
 
 	1) failover 가 정상적으로 완료된 경우에만 smdw VIP를 활성화 합니다.
 	2) master node (mdw)와 stand by master mode (smdw) 에 동시에 VIP가 활성화된 경우 주기적으로 메세지를 발생합니다.
@@ -144,7 +144,7 @@
 
 		양족 노드에 다음과 같은 메세지가 주기적으로 발생합니다.
 		
-    Broadcast message from systemd-journald@smdw (Fri 2025-04-25 21:02:33 KST):
+          	Broadcast message from systemd-journald@smdw (Fri 2025-04-25 21:02:33 KST):
 		root[8024]: GP:ERROR : VIP is activated both MASTER and STANDBY servers! please running one server.
 		Message from syslogd@smdw at Apr 25 21:02:33 ...
  		root[8024]:GP:ERROR : VIP is activated both MASTER and STANDBY servers! please running one server.
