@@ -13,20 +13,21 @@
 
 # 개선된 사항 (2025.04.25)
 
-	1) failover 가 정상적으로 완료된 경우에만 VIP를 활성화 합니다.
-	2) 어떤 경우에도 master node (mdw)와 stand by master mode (smdw) 에 동시에 VIP가 활성화 되지 않도록 합니다.
+	1) failover 가 정상적으로 완료된 경우에만 smdw VIP를 활성화 합니다.
+	2) master node (mdw)와 stand by master mode (smdw) 에 동시에 VIP가 활성화된 경우 주기적으로 메세지를 발생합니다.
 	3) VIP 가 활성화 되지 않았거나 두 노드에서 VIP가 활성화 되있는 경우 master node 와 stand by master 에 주기적으로 모두 메세지를 발생합니다.
-	4) Greenplum 버젼에 따라 promote 명령어가 상이합니다. 버젼을 체크하여 버젼에 맞는 명령어를 실행할수 있도록 합니다.
+	4) Greenplum 버젼에 따라 promote 명령어가 상이합니다. 버젼을 체크하여 적합한 명령어를 실행할수 있도록 합니다. (v6 & v7)
 
 # 설정 방법
 
 	1. vip_env.sh 수정 (mdw)
 		
 		vi 에디터를 이용하여 사용자 환경에 맞도록 설정하세요 
-		주의사항 : VIP_INTERFACE 설정에서 기존 네트워크 아답터 이름에서  ":0"을 붙여 설여 설정합니다.
+		주의사항1 : VIP_INTERFACE 설정에서 기존 네트워크 아답터 이름에서  ":0"을 붙여 설여 설정합니다.
 
 	2. 사용자 OS환경에 적합한 setup 스크립트를 master 노드에서 실행합니다. (mdw)
 
+		주의사항2 : master node에서 setup 스크립트를 실행합니다.
 		ex)
 		[gpadmin@mdw gpfailover]$ sudo sh setup_gpfo_rhel8.sh
 		Is current GPDB started?
@@ -84,7 +85,7 @@
 		        TX packets 342889  bytes 485838094 (463.3 MiB)
 		        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-		ens160:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500                    <=============================
+		ens160:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500                    
 		        inet 172.16.200.100  netmask 255.255.252.0  broadcast 172.16.203.255
 		        ether 00:0c:29:68:08:d5  txqueuelen 1000  (Ethernet)
 
