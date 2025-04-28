@@ -1,6 +1,6 @@
 # gpfailover 개요
 
-  gpfailover 서비스로 등록하여 greenplum master node의 failover 를 설정할수 있는 스크립트입니다.
+  	gpfailover 서비스로 등록하여 greenplum master node에서 문제 발생시 stand by master로 자동으로 failover 될수 있도록 설정할수 있는 스크립트입니다.
 
 
 # 원리
@@ -14,20 +14,40 @@
 # 개선사항 (2025.04.25)
 
 	1) failover 가 정상적으로 완료된 경우에만 smdw VIP를 활성화 합니다.
-	2) master node (mdw)와 stand by master mode (smdw) 에 동시에 VIP가 활성화된 경우 주기적으로 메세지를 발생합니다.
+	2) master node (mdw)와 stand by master node (smdw) 에 동시에 VIP가 활성화된 경우 master node 터미널에 주기적으로 메세지를 발생합니다.
 	3) VIP 가 활성화 되지 않았거나 두 노드에서 VIP가 활성화 되있는 경우 master node 와 stand by master 에 주기적으로 모두 메세지를 발생합니다.
-	4) Greenplum 버젼에 따라 promote 명령어가 상이합니다. 버젼을 체크하여 적합한 명령어를 실행할수 있도록 합니다. (v6 & v7)
+	4) Greenplum 버젼에 따라 promote 명령어가 상이합니다. 버젼을 체크하여 적합한 명령어를 실행할수 있도록 합니다. (지원되는 버젼 v6, v7)
 
 # 설정 방법
 
 	1. vip_env.sh 수정 (mdw)
 		
 		vi 에디터를 이용하여 사용자 환경에 맞도록 설정하세요 
+		
+		GPMDW : master node hostname
+  		GPSMDW : stand by master node hostname
+		ARPING_INTERFACE : interface name (ifconfig 로 확인)
+  		VIP_INTERFACE : VIP interface name 
+		VIP : VIP IP 
+  		VIP_GW : GATEWAY IP (ip route 명령어로 확인)
+    		VIP_NETMASK : netmask 정보 (ifconfig 로 확인)
+
+		ex)
+		[gpadmin@smdw gpfailover]$ cat vip_env.sh
+		GPMDW=mdw
+		GPSMDW=smdw
+		ARPING_INTERFACE=ens160
+		VIP_INTERFACE=ens160:0
+		VIP=172.16.200.100
+		VIP_GW=172.16.200.2
+		VIP_NETMASK=255.255.252.0
+	
 		주의사항1 : VIP_INTERFACE 설정에서 기존 네트워크 아답터 이름에서  ":0"을 붙여 설여 설정합니다.
+		
 
 	2. 사용자 OS환경에 적합한 setup 스크립트를 master 노드에서 실행합니다. (mdw)
 
-		주의사항2 : master node에서 setup 스크립트를 실행합니다.
+		주의사항2 : master node에서 root 권한이 있는 사용자로 setup 스크립트를 실행합니다.
 		ex)
 		[gpadmin@mdw gpfailover]$ sudo sh setup_gpfo_rhel8.sh
 		Is current GPDB started?
@@ -44,11 +64,7 @@
 		vip_start.sh                                    100%  187   368.7KB/s   00:00
 		vip_stop.sh                                     100%   91   178.2KB/s   00:00
 		vip                                             100%  493   846.4KB/s   00:00
-		dest open("/etc/rc.d/rc3.d/"): Failure
-		failed to upload file S99gpfailover to /etc/rc.d/rc3.d/
-		chown: cannot access '/etc/rc.d/rc3.d/S99gpfailover': No such file or directory
 		gpfailover                                      100%  837     2.0MB/s   00:00
-		stat local "gpfailover.service": No such file or directory
 		2. Copy Files - smdw : OK
 		3. smdw .bash_profile modify : OK
 		ARPING 172.16.200.2 from 172.16.200.100 ens160
