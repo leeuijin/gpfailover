@@ -65,10 +65,10 @@ do
 
 	        if [[ "$GP_VERSION" == 6.* ]]; then
 			 logger -i -p user.emerg "GP:INFO : Greenplum v6 detected. Failover Script Running ..."
-                         gpactivatestandby -d /data/master/gpseg-1 -a -q
+                         su - gpactivatestandby -d /data/master/gpseg-1 -a -q
                 elif [[ "$GP_VERSION" == 7.* ]]; then
 			 logger -i -p user.emerg "GP:INFO : Greenplum v7 detected. Failover Script Running ..."
-                         gpactivatestandby -d /data/coordinator/gpseg-1 -a -q
+                         su - gpactivatestandby -d /data/coordinator/gpseg-1 -a -q
                 else
                 echo "Unsupported Greenplum version: $GP_VERSION"
                 fi
