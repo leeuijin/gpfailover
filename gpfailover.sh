@@ -45,7 +45,7 @@ do
 	fi
 
 	# ping 체크로 마스터서버 ㅎheart beat 체크 (연속적으로)
-	CNT_A=`ping -c 5 -i 2 ${GPMDW} | grep ", 0% packet loss"| wc -l`
+	CNT_A=`ping -c 6 -i 10 ${GPMDW} | grep ", 0% packet loss"| wc -l`
 	if [ $CNT_A -eq 1 ]; then
 		DEADCNT=$(($DEADCNT*0))
 		echo "DEAD CHECK COUNT RESET"
