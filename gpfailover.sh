@@ -44,7 +44,7 @@ do
 		echo "{GPSMDW} is standby !!!"
 	fi
 
-	# ping 체크로 마스터서버 ㅎheart beat 체크 (연속적으로)
+	# ping 체크로 마스터서버 heart beat 체크 (연속적으로)
 	CNT_A=`ping -c 6 -i 10 ${GPMDW} | grep ", 0% packet loss"| wc -l`
 	if [ $CNT_A -eq 1 ]; then
 		DEADCNT=$(($DEADCNT*0))
@@ -59,40 +59,40 @@ do
 		echo "GPDB MASTER ALIVE"
 	else
 		echo "GPDB RUN gpactivatestandby!!!"
-
-		logger -i -p user.emerg "GP:WARNING : GPDB MASTER VM IS NOT AVAILABLE !!! "
-		
-
-	        if [[ "$GP_VERSION" == 6.* ]]; then
-			 logger -i -p user.emerg "GP:INFO : Greenplum v6 detected. Failover Script Running ..."
-                         su - gpactivatestandby -d /data/master/gpseg-1 -a -q
+                logger -i -p user.emerg "GP:WARNING : GPDB MASTER VM IS NOT AVAILABLE !!! "
+                su - gpadmin -c "gpactivatestandby -d /data/coordinator/gpseg-1 -a -q"
+		if [[ "$GP_VERSION" == 6.* ]]; then
+                         logger -i -p user.emerg "GP:INFO : Greenplum v6 detected. Failover Script Running ..."
+                         #su - gpadmin -c "gpactivatestandby -d /data/master/gpseg-1 -a -q"
                 elif [[ "$GP_VERSION" == 7.* ]]; then
-			 logger -i -p user.emerg "GP:INFO : Greenplum v7 detected. Failover Script Running ..."
-                         su - gpactivatestandby -d /data/coordinator/gpseg-1 -a -q
+                         logger -i -p user.emerg "GP:INFO : Greenplum v7 detected. Failover Script Running ..."
+                         su - gpadmin -c "gpactivatestandby -d /data/coordinator/gpseg-1 -a -q"
                 else
-                echo "Unsupported Greenplum version: $GP_VERSION"
+                        echo "Unsupported Greenplum version: $GP_VERSION"
                 fi
 
 	### Checking the gpactivatesstandby.log
 	cd /home/gpadmin/gpAdminLogs
-	SUCCESS_FG=`ls -lrt gpactivatestandby_*.log | tail -1 | awk '{print $9}' | xargs tail -30 | grep "completed successfully" | wc -l`
+	SUCCESS_FG=`ls -lrt gpactivatestandby_*.log | tail -1 | awk '{print $9}' | xargs tail -20 | grep "completed successfully" | wc -l`
 	if [ ${SUCCESS_FG} -eq 1 ]
 	then
+		#sudo sh /usr/local/bin/vip_start.sh
 		ssh mdw 'sudo ifconfig ${VIP_INTERFACE} down'
 		sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} up
 		logger -i -p user.emerg "GP:INFO : Greenplum master failover has completed successfully"
 	else
 		logger -i -p user.emerg "GP:ERROR : Failed the activation of the standby master !!!"
-		logger -i -p user.emerg "GP:INFO : initialize VIP Configration" 
+		logger -i -p user.emerg "GP:INFO : initialize VIP Configration"
+		#sudo sh /usr/local/bin/vip_stop.sh
 		sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} down
-		logger -i -p user.emerg "GP:INFO : Restarting VIP on Master node"	
+		logger -i -p user.emerg "GP:INFO : Restarting VIP on Master node"
 		ssh mdw 'sudo ifconfig ${VIP_INTERFACE} ${VIP} netmask ${VIP_NETMASK} up'
 	fi
-	
+
 	### Start pgbouncer
         #su - gpadmin -c "gpstop -u"
         #su - gpadmin -c "/usr/local/greenplum-db/bin/pgbouncer -d /data/master/pgbouncer/pgbouncer.ini"
-	
+
 
 	### Checking VIP
         VIP_FG=`ifconfig | grep ${VIP} | wc -l`
@@ -102,7 +102,7 @@ do
         else
                 logger -i -p user.emerg "GP:ERROR : Failed to start Stand by Master Virtual IP  ${VIP} "
         exit 1
-        fi
+	fi
 	### arping
         arping -f -w 10 -s ${VIP} -U ${VIP_GW} -I ${ARPING_INTERFACE}
 
@@ -110,7 +110,6 @@ do
         logger -i -p user.emerg "GP:INFO : Greenplum master failover has completed successfully"
         exit 0
 fi
-
-sleep 10 
+sleep  10
 done
 exit 0
