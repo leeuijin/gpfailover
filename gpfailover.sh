@@ -60,10 +60,9 @@ do
 	else
 		echo "GPDB RUN gpactivatestandby!!!"
                 logger -i -p user.emerg "GP:WARNING : GPDB MASTER VM IS NOT AVAILABLE !!! "
-                su - gpadmin -c "gpactivatestandby -d /data/coordinator/gpseg-1 -a -q"
-		if [[ "$GP_VERSION" == 6.* ]]; then
+                if [[ "$GP_VERSION" == 6.* ]]; then
                          logger -i -p user.emerg "GP:INFO : Greenplum v6 detected. Failover Script Running ..."
-                         #su - gpadmin -c "gpactivatestandby -d /data/master/gpseg-1 -a -q"
+                         su - gpadmin -c "gpactivatestandby -d /data/master/gpseg-1 -a -q"
                 elif [[ "$GP_VERSION" == 7.* ]]; then
                          logger -i -p user.emerg "GP:INFO : Greenplum v7 detected. Failover Script Running ..."
                          su - gpadmin -c "gpactivatestandby -d /data/coordinator/gpseg-1 -a -q"
