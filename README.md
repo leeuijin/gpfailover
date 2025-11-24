@@ -150,7 +150,7 @@
 
 	1. master node 에 VIP가 활성화 되지 않은 경우
 
-		양족 노드에 다음과 같은 메세지가 주기적으로 발생합니다.
+		두 노드에 다음과 같은 메세지가 주기적으로 발생합니다.
 
 		[gpadmin@mdw gpfailover]$ sudo sh vip_stop.sh
 		Broadcast message from root@mdw (somewhere) (Fri Apr 25 21:00:03 2025):
@@ -158,7 +158,7 @@
 
 	2. 	master node 와 stand by master node 모두 VIP가 활성화 되어 있는 경우
 
-		양족 노드에 다음과 같은 메세지가 주기적으로 발생합니다.
+		두 노드에 다음과 같은 메세지가 주기적으로 발생합니다.
 		
           	Broadcast message from systemd-journald@smdw (Fri 2025-04-25 21:02:33 KST):
 		root[8024]: GP:ERROR : VIP is activated both MASTER and STANDBY servers! please running one server.
