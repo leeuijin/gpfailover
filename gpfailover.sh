@@ -61,7 +61,7 @@ do
 	else
 		echo "GPDB RUN gpactivatestandby!!!"
                 logger -i -p user.emerg "GP:WARNING : GPDB MASTER VM IS NOT AVAILABLE !!! "
-                logger -i -p user.emerg "GP:INFO : Greenplum v6 detected. Failover Script Running ..."
+                logger -i -p user.emerg "GP:INFO : Greenplum Failover Script Running ..."
                 su - gpadmin -c "gpactivatestandby -d /data/master/gpseg-1 -a -q"
 	### Checking the gpactivatestandby.log
         cd /home/gpadmin/gpAdminLogs
