@@ -28,8 +28,10 @@ do
     		echo "One of the variables (VIP_MD_FG or VIP_SMD_FG) is not a number."
     		logger -i -p user.emerg "GP:ERROR : VIP_MD_FG or VIP_SMD_FG is not numeric."
 	elif [ "$VIP_MD_FG" -eq 1 ] && [ "$VIP_SMD_FG" -eq 1 ]; then
-    		logger -i -p user.emerg "GP:ERROR : VIP is activated both MASTER and STANDBY servers! please running one server."
+    		logger -i -p user.emerg "GP:ERROR : VIP is activated both MASTER and STANDBY servers!"
+			logger -i -p user.emerg "GP:ERROR : You must use VIPs only on one server."
 		ssh mdw 'echo "GP:ERROR : VIP is activated both MASTER and STANDBY servers! please running one server." | wall'
+		ssh mdw 'echo "GP:ERROR : GP:ERROR : You must use VIPs only on one server." | wall'
 	elif [ "$VIP_MD_FG" -eq 0 ] && [ "$VIP_SMD_FG" -eq 0 ]; then
     		logger -i -p user.emerg "GP:INFO : Does not activated VIP. Please running VIP."
 		ssh mdw 'echo "GP:INFO : Does not activated VIP. Please running VIP." | wall'
@@ -53,7 +55,7 @@ do
 		echo "DEAD CHECK COUNT : " $DEADCNT "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	fi
 
-	if [ $DEADCNT -lt 4 ]
+	if [ $DEADCNT -lt 3 ]
 	then
 		echo "GPDB MASTER ALIVE"
 	else
