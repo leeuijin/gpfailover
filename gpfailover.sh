@@ -53,7 +53,7 @@ do
 		echo "DEAD CHECK COUNT : " $DEADCNT "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	fi
 
-	if [ $DEADCNT -lt 3 ]
+	if [ $DEADCNT -lt 4 ]
 	then
 		echo "GPDB MASTER ALIVE"
 	else
