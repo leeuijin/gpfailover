@@ -5,7 +5,6 @@
 DEADCNT=0
 
 ## get vip config
-GP_VERSION=`gpstate -i |grep 'local Greenplum Version' |awk {'print $8'}`
 . /usr/local/bin/vip_env.sh
 . /usr/local/greenplum-db/greenplum_path.sh
 export PGPORT=5432
